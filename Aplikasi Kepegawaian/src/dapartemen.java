@@ -19,7 +19,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
- * @author Pongo
+ * @author **
  */
 public class dapartemen extends javax.swing.JFrame {
     private Connection conn;
@@ -262,7 +262,7 @@ public class dapartemen extends javax.swing.JFrame {
     }
       private void cetak(){
             try {
-                    String reportPath = "src/Report/"; // Lokasi file laporan Jasper
+                    String reportPath = "src/laporan/LaporanDepartemen.jasper"; // Lokasi file laporan Jasper
                     Connection conn = koneksi.getConnection(); // Metode untuk mendapatkan koneksi database
 
                     HashMap<String, Object> parameters = new HashMap<>(); // Membuat parameter untuk laporan
@@ -309,7 +309,7 @@ public class dapartemen extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel2.setBackground(new java.awt.Color(204, 255, 204));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnKembali.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
@@ -433,7 +433,7 @@ public class dapartemen extends javax.swing.JFrame {
         TxtJumlahPegawai.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
         jPanel2.add(TxtJumlahPegawai, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 140, 330, -1));
 
-        jPanel1.setBackground(new java.awt.Color(51, 153, 255));
+        jPanel1.setBackground(new java.awt.Color(255, 153, 102));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));

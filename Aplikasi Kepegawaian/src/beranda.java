@@ -5,7 +5,7 @@
 
 /**
  *
- * @author Pongo
+ * @author **
  */
 public class beranda extends javax.swing.JFrame {
 
@@ -34,7 +34,8 @@ public class beranda extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
+        jButton1.setBackground(new java.awt.Color(255, 204, 153));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 26)); // NOI18N
         jButton1.setText("Pegawai");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -42,7 +43,8 @@ public class beranda extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
+        jButton2.setBackground(new java.awt.Color(255, 204, 153));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 26)); // NOI18N
         jButton2.setText("Dapartemen");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -50,7 +52,8 @@ public class beranda extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
+        jButton3.setBackground(new java.awt.Color(255, 204, 153));
+        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 26)); // NOI18N
         jButton3.setText("Gaji");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -58,6 +61,7 @@ public class beranda extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setBackground(new java.awt.Color(255, 51, 102));
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jButton4.setText("Keluar");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -66,7 +70,7 @@ public class beranda extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setBackground(new java.awt.Color(0, 204, 153));
+        jPanel1.setBackground(new java.awt.Color(0, 204, 204));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 27)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
