@@ -123,129 +123,173 @@ public class pegawai extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Pencarian gagal: " + e.getMessage());
     }
 }
-private void simpanData() {
-    String nama = TxtNamaPegawai.getText().trim();  // Mengambil nama pegawai dari field TxtNamaPegawai
-    String alamat = TxtAlamat.getText().trim();  // Mengambil alamat dari field TxtAlamat
-    String jenisKelamin = getSelectedJenisKelamin();  // Mengambil jenis kelamin dari radio button
-    String noTelepon = TxtNoTelepon.getText().trim();  // Mengambil no telepon dari field TxtNoTelepon
-    String jabatan = TxtJabatan.getText().trim();  // Mengambil jabatan dari field TxtJabatan
-    String gaji = TxtGaji.getText().trim();  // Mengambil gaji dari field TxtGaji
-    String statusKepegawaian = comboStatusKepegawaian.getSelectedItem().toString();  // Mengambil status kepegawaian dari combobox
-    String email = TxtEmail.getText().trim();  // Mengambil email dari field TxtEmail
+    private void simpanData() {
+        String nama = TxtNamaPegawai.getText().trim();  // Mengambil nama pegawai dari field TxtNamaPegawai
+        String alamat = TxtAlamat.getText().trim();  // Mengambil alamat dari field TxtAlamat
+        String jenisKelamin = getSelectedJenisKelamin();  // Mengambil jenis kelamin dari radio button
+        String noTelepon = TxtNoTelepon.getText().trim();  // Mengambil no telepon dari field TxtNoTelepon
+        String jabatan = TxtJabatan.getText().trim();  // Mengambil jabatan dari field TxtJabatan
+        String gaji = TxtGaji.getText().trim();  // Mengambil gaji dari field TxtGaji
+        String statusKepegawaian = comboStatusKepegawaian.getSelectedItem().toString();  // Mengambil status kepegawaian dari combobox
+        String email = TxtEmail.getText().trim();  // Mengambil email dari field TxtEmail
 
-    // Validasi input
-    if (nama.isEmpty() || alamat.isEmpty() || jenisKelamin == null || 
-        noTelepon.isEmpty() || jabatan.isEmpty() || gaji.isEmpty() || statusKepegawaian == null || 
-        email.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Mohon lengkapi semua data.");
-        return;
+        // Validasi input
+        if (nama.isEmpty() || alamat.isEmpty() || jenisKelamin == null || 
+            noTelepon.isEmpty() || jabatan.isEmpty() || gaji.isEmpty() || statusKepegawaian == null || 
+            email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mohon lengkapi semua data.");
+            return;
+        }
+
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "INSERT INTO pegawai (nama_pegawai, alamat, jenis_kelamin, no_telepon, jabatan, gaji, status_kepegawaian, email) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+            pstmt.setString(1, nama);
+            pstmt.setString(2, alamat);
+            pstmt.setString(3, jenisKelamin);
+            pstmt.setString(4, noTelepon);
+            pstmt.setString(5, jabatan);
+            pstmt.setBigDecimal(6, new BigDecimal(gaji));
+            pstmt.setString(7, statusKepegawaian);
+            pstmt.setString(8, email);
+
+            pstmt.executeUpdate();  // Eksekusi query untuk menyimpan data
+
+            JOptionPane.showMessageDialog(this, "Data pegawai berhasil disimpan.");
+
+            // Memuat ulang data dari database ke tabel GUI
+            loadData();
+
+            // Kosongkan field input setelah data disimpan
+            TxtNamaPegawai.setText("");
+            TxtAlamat.setText("");
+            radioLakiLaki.setSelected(false);
+            radioPerempuan.setSelected(false);
+            TxtNoTelepon.setText("");
+            TxtJabatan.setText("");
+            TxtGaji.setText("");
+            comboStatusKepegawaian.setSelectedIndex(0);  // Set ke pilihan pertama
+            TxtEmail.setText("");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan data pegawai: " + e.getMessage());
+        }
+    }
+    private void ubahData() {
+        int selectedRow = tabelPegawai.getSelectedRow(); // Ambil baris yang dipilih di tabel
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih pegawai yang ingin diubah.");
+            return;
+        }
+
+        // Ambil data dari input fields
+        String nama = TxtNamaPegawai.getText().trim();
+        String alamat = TxtAlamat.getText().trim();
+        String jenisKelamin = radioLakiLaki.isSelected() ? "Laki-laki" : "Perempuan";
+        String noTelepon = TxtNoTelepon.getText().trim();
+        String jabatan = TxtJabatan.getText().trim();
+        String gajiStr = TxtGaji.getText().trim();
+        String statusKepegawaian = (String) comboStatusKepegawaian.getSelectedItem();
+        String email = TxtEmail.getText().trim();
+
+        int idPegawai = (int) tabelPegawai.getValueAt(selectedRow, 0); // Ambil ID_pegawai dari tabel
+
+        // Validasi input
+        if (nama.isEmpty() || alamat.isEmpty() || noTelepon.isEmpty() || jabatan.isEmpty() || gajiStr.isEmpty() || statusKepegawaian.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua field harus diisi.");
+            return;
+        }
+
+        // Mengonversi gaji dari String ke tipe data yang sesuai (Decimal)
+        double gaji = 0;
+        try {
+            gaji = Double.parseDouble(gajiStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Gaji harus berupa angka.");
+            return;
+        }
+
+        // Menyiapkan query untuk mengubah data pegawai
+        String query = "UPDATE pegawai SET nama_pegawai = ?, alamat = ?, jenis_kelamin = ?, no_telepon = ?, jabatan = ?, gaji = ?, status_kepegawaian = ?, email = ? WHERE id_pegawai = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, nama);
+            pstmt.setString(2, alamat);
+            pstmt.setString(3, jenisKelamin);
+            pstmt.setString(4, noTelepon);
+            pstmt.setString(5, jabatan);
+            pstmt.setDouble(6, gaji);
+            pstmt.setString(7, statusKepegawaian);
+            pstmt.setString(8, email);
+            pstmt.setInt(9, idPegawai); // Mengupdate berdasarkan ID pegawai
+
+            pstmt.executeUpdate(); // Eksekusi query update
+
+            JOptionPane.showMessageDialog(this, "Data pegawai berhasil diubah.");
+            loadData(); // Reload tabel setelah data diubah
+
+            // Clear input fields setelah berhasil
+            TxtNamaPegawai.setText("");
+            TxtAlamat.setText("");
+            radioLakiLaki.setSelected(false);
+            radioPerempuan.setSelected(false);
+            TxtNoTelepon.setText("");
+            TxtJabatan.setText("");
+            TxtGaji.setText("");
+            comboStatusKepegawaian.setSelectedItem(null);
+            TxtEmail.setText("");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal mengubah data: " + e.getMessage());
+        }
     }
 
-    try (PreparedStatement pstmt = conn.prepareStatement(
-            "INSERT INTO pegawai (nama_pegawai, alamat, jenis_kelamin, no_telepon, jabatan, gaji, status_kepegawaian, email) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
-        pstmt.setString(1, nama);
-        pstmt.setString(2, alamat);
-        pstmt.setString(3, jenisKelamin);
-        pstmt.setString(4, noTelepon);
-        pstmt.setString(5, jabatan);
-        pstmt.setBigDecimal(6, new BigDecimal(gaji));
-        pstmt.setString(7, statusKepegawaian);
-        pstmt.setString(8, email);
-
-        pstmt.executeUpdate();  // Eksekusi query untuk menyimpan data
-
-        JOptionPane.showMessageDialog(this, "Data pegawai berhasil disimpan.");
-
-        // Memuat ulang data dari database ke tabel GUI
-        loadData();
-
-        // Kosongkan field input setelah data disimpan
+    private void batal(){
         TxtNamaPegawai.setText("");
-        TxtAlamat.setText("");
-        radioLakiLaki.setSelected(false);
-        radioPerempuan.setSelected(false);
-        TxtNoTelepon.setText("");
-        TxtJabatan.setText("");
-        TxtGaji.setText("");
-        comboStatusKepegawaian.setSelectedIndex(0);  // Set ke pilihan pertama
-        TxtEmail.setText("");
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Gagal menyimpan data pegawai: " + e.getMessage());
+            TxtAlamat.setText("");
+            buttonGroup1.clearSelection(); // Menghapus pilihan jenis kelamin
+            TxtNoTelepon.setText("");
+            TxtJabatan.setText("");
+            TxtGaji.setText("");
+            comboStatusKepegawaian.setSelectedIndex(0);
+            TxtEmail.setText("");
+            txtCari.setText("");
+            tabelPegawai.clearSelection();
+            loadData();
     }
-}
-private void ubahData() {
-    int selectedRow = tabelPegawai.getSelectedRow(); // Ambil baris yang dipilih di tabel
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Pilih pegawai yang ingin diubah.");
-        return;
-    }
+    private void hapusData() {
+        int selectedRow = tabelPegawai.getSelectedRow(); // Ambil baris yang dipilih di tabel
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus.");
+            return;
+        }
 
-    // Ambil data dari input fields
-    String nama = TxtNamaPegawai.getText().trim();
-    String alamat = TxtAlamat.getText().trim();
-    String jenisKelamin = radioLakiLaki.isSelected() ? "Laki-laki" : "Perempuan";
-    String noTelepon = TxtNoTelepon.getText().trim();
-    String jabatan = TxtJabatan.getText().trim();
-    String gajiStr = TxtGaji.getText().trim();
-    String statusKepegawaian = (String) comboStatusKepegawaian.getSelectedItem();
-    String email = TxtEmail.getText().trim();
-    
-    int idPegawai = (int) tabelPegawai.getValueAt(selectedRow, 0); // Ambil ID_pegawai dari tabel
+        // Ambil ID Pegawai yang dipilih dari tabel
+        int selectedIdPegawai = (int) tabelPegawai.getValueAt(selectedRow, 0);
 
-    // Validasi input
-    if (nama.isEmpty() || alamat.isEmpty() || noTelepon.isEmpty() || jabatan.isEmpty() || gajiStr.isEmpty() || statusKepegawaian.isEmpty() || email.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Semua field harus diisi.");
-        return;
-    }
+        // Konfirmasi penghapusan
+        int confirm = JOptionPane.showConfirmDialog(
+                this, 
+                "Apakah Anda yakin ingin menghapus data ini?", 
+                "Konfirmasi Hapus", 
+                JOptionPane.YES_NO_OPTION
+        );
 
-    // Mengonversi gaji dari String ke tipe data yang sesuai (Decimal)
-    double gaji = 0;
-    try {
-        gaji = Double.parseDouble(gajiStr);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Gaji harus berupa angka.");
-        return;
-    }
+        if (confirm == JOptionPane.YES_OPTION) {
+            try (PreparedStatement pstmt = conn.prepareStatement("DELETE FROM pegawai WHERE id_pegawai = ?")) {
+                pstmt.setInt(1, selectedIdPegawai); // Set ID Pegawai yang ingin dihapus
+                pstmt.executeUpdate(); // Jalankan query untuk menghapus data
 
-    // Menyiapkan query untuk mengubah data pegawai
-    String query = "UPDATE pegawai SET nama_pegawai = ?, alamat = ?, jenis_kelamin = ?, no_telepon = ?, jabatan = ?, gaji = ?, status_kepegawaian = ?, email = ? WHERE id_pegawai = ?";
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus.");
+                loadData(); // Muat ulang data tabel setelah penghapusan
 
-    try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-        pstmt.setString(1, nama);
-        pstmt.setString(2, alamat);
-        pstmt.setString(3, jenisKelamin);
-        pstmt.setString(4, noTelepon);
-        pstmt.setString(5, jabatan);
-        pstmt.setDouble(6, gaji);
-        pstmt.setString(7, statusKepegawaian);
-        pstmt.setString(8, email);
-        pstmt.setInt(9, idPegawai); // Mengupdate berdasarkan ID pegawai
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus data: " + e.getMessage());
+            }
+        }
 
-        pstmt.executeUpdate(); // Eksekusi query update
-
-        JOptionPane.showMessageDialog(this, "Data pegawai berhasil diubah.");
-        loadData(); // Reload tabel setelah data diubah
-
-        // Clear input fields setelah berhasil
+        // Reset form input setelah penghapusan
         TxtNamaPegawai.setText("");
-        TxtAlamat.setText("");
-        radioLakiLaki.setSelected(false);
-        radioPerempuan.setSelected(false);
-        TxtNoTelepon.setText("");
-        TxtJabatan.setText("");
-        TxtGaji.setText("");
-        comboStatusKepegawaian.setSelectedItem(null);
-        TxtEmail.setText("");
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Gagal mengubah data: " + e.getMessage());
-    }
-}
-
-private void batal(){
-    TxtNamaPegawai.setText("");
         TxtAlamat.setText("");
         buttonGroup1.clearSelection(); // Menghapus pilihan jenis kelamin
         TxtNoTelepon.setText("");
@@ -253,54 +297,10 @@ private void batal(){
         TxtGaji.setText("");
         comboStatusKepegawaian.setSelectedIndex(0);
         TxtEmail.setText("");
-        txtCari.setText("");
-        tabelPegawai.clearSelection();
-        loadData();
-}
-private void hapusData() {
-    int selectedRow = tabelPegawai.getSelectedRow(); // Ambil baris yang dipilih di tabel
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus.");
-        return;
+        tabelPegawai.clearSelection(); // Hapus pilihan tabel
     }
 
-    // Ambil ID Pegawai yang dipilih dari tabel
-    int selectedIdPegawai = (int) tabelPegawai.getValueAt(selectedRow, 0);
-
-    // Konfirmasi penghapusan
-    int confirm = JOptionPane.showConfirmDialog(
-            this, 
-            "Apakah Anda yakin ingin menghapus data ini?", 
-            "Konfirmasi Hapus", 
-            JOptionPane.YES_NO_OPTION
-    );
-
-    if (confirm == JOptionPane.YES_OPTION) {
-        try (PreparedStatement pstmt = conn.prepareStatement("DELETE FROM pegawai WHERE id_pegawai = ?")) {
-            pstmt.setInt(1, selectedIdPegawai); // Set ID Pegawai yang ingin dihapus
-            pstmt.executeUpdate(); // Jalankan query untuk menghapus data
-
-            JOptionPane.showMessageDialog(this, "Data berhasil dihapus.");
-            loadData(); // Muat ulang data tabel setelah penghapusan
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal menghapus data: " + e.getMessage());
-        }
-    }
-
-    // Reset form input setelah penghapusan
-    TxtNamaPegawai.setText("");
-    TxtAlamat.setText("");
-    buttonGroup1.clearSelection(); // Menghapus pilihan jenis kelamin
-    TxtNoTelepon.setText("");
-    TxtJabatan.setText("");
-    TxtGaji.setText("");
-    comboStatusKepegawaian.setSelectedIndex(0);
-    TxtEmail.setText("");
-    tabelPegawai.clearSelection(); // Hapus pilihan tabel
-}
-
-private void cetak(){
+    private void cetak(){
             try {
                     String reportPath = "src/Report/"; // Lokasi file laporan Jasper
                     Connection conn = koneksi.getConnection(); // Metode untuk mendapatkan koneksi database

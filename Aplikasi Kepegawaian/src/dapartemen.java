@@ -74,192 +74,192 @@ public class dapartemen extends javax.swing.JFrame {
     tabelDepartemen.getColumnModel().getColumn(0).setMinWidth(0);  // Menyembunyikan kolom pertama (ID)
     tabelDepartemen.getColumnModel().getColumn(0).setMaxWidth(0);  // Menyembunyikan kolom pertama (ID)
     tabelDepartemen.getColumnModel().getColumn(0).setWidth(0);     // Menyembunyikan kolom pertama (ID)
-}
-private void cariData() {
-    String keyword = txtCari.getText().trim(); // Ambil teks dari field pencarian
-    DefaultTableModel model = (DefaultTableModel) tabelDepartemen.getModel();
-    model.setRowCount(0); // Kosongkan tabel sebelum menampilkan hasil pencarian
+  }
+    private void cariData() {
+        String keyword = txtCari.getText().trim(); // Ambil teks dari field pencarian
+        DefaultTableModel model = (DefaultTableModel) tabelDepartemen.getModel();
+        model.setRowCount(0); // Kosongkan tabel sebelum menampilkan hasil pencarian
 
-    // SQL query untuk mencari berdasarkan ID Departemen, Nama Departemen, atau Kepala Departemen
-    String sql = "SELECT * FROM departemen WHERE id_departemen LIKE ? OR nama_departemen LIKE ? OR kepala_departemen LIKE ?";
+        // SQL query untuk mencari berdasarkan ID Departemen, Nama Departemen, atau Kepala Departemen
+        String sql = "SELECT * FROM departemen WHERE id_departemen LIKE ? OR nama_departemen LIKE ? OR kepala_departemen LIKE ?";
 
-    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        // Menggunakan parameter pencarian pada ID Departemen, Nama Departemen, atau Kepala Departemen
-        pstmt.setString(1, "%" + keyword + "%");
-        pstmt.setString(2, "%" + keyword + "%");
-        pstmt.setString(3, "%" + keyword + "%");
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Menggunakan parameter pencarian pada ID Departemen, Nama Departemen, atau Kepala Departemen
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setString(2, "%" + keyword + "%");
+            pstmt.setString(3, "%" + keyword + "%");
 
-        try (ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    rs.getInt("id_departemen"),             // ID departemen
-                    rs.getString("nama_departemen"),        // Nama departemen
-                    rs.getString("lokasi_departemen"),      // Lokasi departemen
-                    rs.getString("kepala_departemen"),      // Kepala departemen
-                    rs.getInt("jumlah_pegawai"),            // Jumlah pegawai
-                    rs.getBigDecimal("anggaran_departemen") // Anggaran departemen
-                });
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    model.addRow(new Object[]{
+                        rs.getInt("id_departemen"),             // ID departemen
+                        rs.getString("nama_departemen"),        // Nama departemen
+                        rs.getString("lokasi_departemen"),      // Lokasi departemen
+                        rs.getString("kepala_departemen"),      // Kepala departemen
+                        rs.getInt("jumlah_pegawai"),            // Jumlah pegawai
+                        rs.getBigDecimal("anggaran_departemen") // Anggaran departemen
+                    });
+                }
             }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Pencarian gagal: " + e.getMessage());
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Pencarian gagal: " + e.getMessage());
     }
-}
-private void simpanData() {
-    String namaDepartemen = TxtNamaDepartemen.getText().trim(); // Mengambil nama departemen dari field TxtNamaDepartemen
-    String lokasiDepartemen = TxtLokasiDepartemen.getText().trim(); // Mengambil lokasi departemen dari field TxtLokasiDepartemen
-    String kepalaDepartemen = TxtKepalaDepartemen.getText().trim(); // Mengambil kepala departemen dari field TxtKepalaDepartemen
-    String jumlahPegawai = TxtJumlahPegawai.getText().trim(); // Mengambil jumlah pegawai dari field TxtJumlahPegawai
-    String anggaranDepartemen = TxtAnggaranDepartemen.getText().trim(); // Mengambil anggaran departemen dari field TxtAnggaranDepartemen
+    private void simpanData() {
+        String namaDepartemen = TxtNamaDepartemen.getText().trim(); // Mengambil nama departemen dari field TxtNamaDepartemen
+        String lokasiDepartemen = TxtLokasiDepartemen.getText().trim(); // Mengambil lokasi departemen dari field TxtLokasiDepartemen
+        String kepalaDepartemen = TxtKepalaDepartemen.getText().trim(); // Mengambil kepala departemen dari field TxtKepalaDepartemen
+        String jumlahPegawai = TxtJumlahPegawai.getText().trim(); // Mengambil jumlah pegawai dari field TxtJumlahPegawai
+        String anggaranDepartemen = TxtAnggaranDepartemen.getText().trim(); // Mengambil anggaran departemen dari field TxtAnggaranDepartemen
 
-    // Validasi input
-    if (namaDepartemen.isEmpty() || lokasiDepartemen.isEmpty() || kepalaDepartemen.isEmpty() || 
-        jumlahPegawai.isEmpty() || anggaranDepartemen.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Mohon lengkapi semua data.");
-        return;
-    }
+        // Validasi input
+        if (namaDepartemen.isEmpty() || lokasiDepartemen.isEmpty() || kepalaDepartemen.isEmpty() || 
+            jumlahPegawai.isEmpty() || anggaranDepartemen.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mohon lengkapi semua data.");
+            return;
+        }
 
-    try (PreparedStatement pstmt = conn.prepareStatement(
-            "INSERT INTO departemen (nama_departemen, lokasi_departemen, kepala_departemen, jumlah_pegawai, anggaran_departemen) " +
-            "VALUES (?, ?, ?, ?, ?)")) {
-        pstmt.setString(1, namaDepartemen);
-        pstmt.setString(2, lokasiDepartemen);
-        pstmt.setString(3, kepalaDepartemen);
-        pstmt.setInt(4, Integer.parseInt(jumlahPegawai));
-        pstmt.setBigDecimal(5, new BigDecimal(anggaranDepartemen));
+        try (PreparedStatement pstmt = conn.prepareStatement(
+                "INSERT INTO departemen (nama_departemen, lokasi_departemen, kepala_departemen, jumlah_pegawai, anggaran_departemen) " +
+                "VALUES (?, ?, ?, ?, ?)")) {
+            pstmt.setString(1, namaDepartemen);
+            pstmt.setString(2, lokasiDepartemen);
+            pstmt.setString(3, kepalaDepartemen);
+            pstmt.setInt(4, Integer.parseInt(jumlahPegawai));
+            pstmt.setBigDecimal(5, new BigDecimal(anggaranDepartemen));
 
-        pstmt.executeUpdate(); // Eksekusi query untuk menyimpan data
+            pstmt.executeUpdate(); // Eksekusi query untuk menyimpan data
 
-        JOptionPane.showMessageDialog(this, "Data departemen berhasil disimpan.");
+            JOptionPane.showMessageDialog(this, "Data departemen berhasil disimpan.");
 
-        // Memuat ulang data dari database ke tabel GUI
-        loadData();
+            // Memuat ulang data dari database ke tabel GUI
+            loadData();
 
-        // Kosongkan field input setelah data disimpan
-        TxtNamaDepartemen.setText("");
-        TxtLokasiDepartemen.setText("");
-        TxtKepalaDepartemen.setText("");
-        TxtJumlahPegawai.setText("");
-        TxtAnggaranDepartemen.setText("");
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Gagal menyimpan data departemen: " + e.getMessage());
-    } catch (NumberFormatException nfe) {
-        JOptionPane.showMessageDialog(this, "Format jumlah pegawai atau anggaran tidak valid.");
-    }
-}
-
-private void ubahData() {
-    int selectedRow = tabelDepartemen.getSelectedRow(); // Ambil baris yang dipilih di tabel
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Pilih departemen yang ingin diubah.");
-        return;
-    }
-
-    // Ambil data dari input fields
-    String namaDepartemen = TxtNamaDepartemen.getText().trim();
-    String lokasiDepartemen = TxtLokasiDepartemen.getText().trim();
-    String kepalaDepartemen = TxtKepalaDepartemen.getText().trim();
-    String jumlahPegawaiStr = TxtJumlahPegawai.getText().trim();
-    String anggaranDepartemenStr = TxtAnggaranDepartemen.getText().trim();
-
-    int idDepartemen = (int) tabelDepartemen.getValueAt(selectedRow, 0); // Ambil ID_departemen dari tabel
-
-    // Validasi input
-    if (namaDepartemen.isEmpty() || lokasiDepartemen.isEmpty() || kepalaDepartemen.isEmpty() || 
-        jumlahPegawaiStr.isEmpty() || anggaranDepartemenStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Semua field harus diisi.");
-        return;
-    }
-
-    // Konversi jumlah pegawai dan anggaran ke tipe data yang sesuai
-    int jumlahPegawai = 0;
-    double anggaranDepartemen = 0;
-    try {
-        jumlahPegawai = Integer.parseInt(jumlahPegawaiStr);
-        anggaranDepartemen = Double.parseDouble(anggaranDepartemenStr);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Jumlah pegawai dan anggaran harus berupa angka.");
-        return;
-    }
-
-    // Menyiapkan query untuk mengubah data departemen
-    String query = "UPDATE departemen SET nama_departemen = ?, lokasi_departemen = ?, kepala_departemen = ?, jumlah_pegawai = ?, anggaran_departemen = ? WHERE id_departemen = ?";
-
-    try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-        pstmt.setString(1, namaDepartemen);
-        pstmt.setString(2, lokasiDepartemen);
-        pstmt.setString(3, kepalaDepartemen);
-        pstmt.setInt(4, jumlahPegawai);
-        pstmt.setBigDecimal(5, new BigDecimal(anggaranDepartemen));
-        pstmt.setInt(6, idDepartemen); // Mengupdate berdasarkan ID departemen
-
-        pstmt.executeUpdate(); // Eksekusi query update
-
-        JOptionPane.showMessageDialog(this, "Data departemen berhasil diubah.");
-        loadData(); // Reload tabel setelah data diubah
-
-        // Clear input fields setelah berhasil
-        TxtNamaDepartemen.setText("");
-        TxtLokasiDepartemen.setText("");
-        TxtKepalaDepartemen.setText("");
-        TxtJumlahPegawai.setText("");
-        TxtAnggaranDepartemen.setText("");
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Gagal mengubah data: " + e.getMessage());
-    }
-}
-private void batal() {
-    // Kosongkan semua field input
-    TxtNamaDepartemen.setText("");
-    TxtLokasiDepartemen.setText("");
-    TxtKepalaDepartemen.setText("");
-    TxtJumlahPegawai.setText("");
-    TxtAnggaranDepartemen.setText("");
-    txtCari.setText(""); // Kosongkan field pencarian
-    tabelDepartemen.clearSelection(); // Hapus seleksi pada tabel
-    loadData(); // Muat ulang data di tabel
-}
-private void hapusData() {
-    int selectedRow = tabelDepartemen.getSelectedRow(); // Ambil baris yang dipilih di tabel
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Pilih data departemen yang ingin dihapus.");
-        return;
-    }
-
-    // Ambil ID Departemen yang dipilih dari tabel
-    int selectedIdDepartemen = (int) tabelDepartemen.getValueAt(selectedRow, 0);
-
-    // Konfirmasi penghapusan
-    int confirm = JOptionPane.showConfirmDialog(
-            this, 
-            "Apakah Anda yakin ingin menghapus data departemen ini?", 
-            "Konfirmasi Hapus", 
-            JOptionPane.YES_NO_OPTION
-    );
-
-    if (confirm == JOptionPane.YES_OPTION) {
-        try (PreparedStatement pstmt = conn.prepareStatement("DELETE FROM departemen WHERE id_departemen = ?")) {
-            pstmt.setInt(1, selectedIdDepartemen); // Set ID Departemen yang ingin dihapus
-            pstmt.executeUpdate(); // Jalankan query untuk menghapus data
-
-            JOptionPane.showMessageDialog(this, "Data departemen berhasil dihapus.");
-            loadData(); // Muat ulang data tabel setelah penghapusan
+            // Kosongkan field input setelah data disimpan
+            TxtNamaDepartemen.setText("");
+            TxtLokasiDepartemen.setText("");
+            TxtKepalaDepartemen.setText("");
+            TxtJumlahPegawai.setText("");
+            TxtAnggaranDepartemen.setText("");
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal menghapus data departemen: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan data departemen: " + e.getMessage());
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(this, "Format jumlah pegawai atau anggaran tidak valid.");
         }
     }
 
-    // Reset form input setelah penghapusan
-    TxtNamaDepartemen.setText("");
-    TxtLokasiDepartemen.setText("");
-    TxtKepalaDepartemen.setText("");
-    TxtJumlahPegawai.setText("");
-    TxtAnggaranDepartemen.setText("");
-    tabelDepartemen.clearSelection(); // Hapus pilihan tabel
-}
+    private void ubahData() {
+        int selectedRow = tabelDepartemen.getSelectedRow(); // Ambil baris yang dipilih di tabel
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih departemen yang ingin diubah.");
+            return;
+        }
+
+        // Ambil data dari input fields
+        String namaDepartemen = TxtNamaDepartemen.getText().trim();
+        String lokasiDepartemen = TxtLokasiDepartemen.getText().trim();
+        String kepalaDepartemen = TxtKepalaDepartemen.getText().trim();
+        String jumlahPegawaiStr = TxtJumlahPegawai.getText().trim();
+        String anggaranDepartemenStr = TxtAnggaranDepartemen.getText().trim();
+
+        int idDepartemen = (int) tabelDepartemen.getValueAt(selectedRow, 0); // Ambil ID_departemen dari tabel
+
+        // Validasi input
+        if (namaDepartemen.isEmpty() || lokasiDepartemen.isEmpty() || kepalaDepartemen.isEmpty() || 
+            jumlahPegawaiStr.isEmpty() || anggaranDepartemenStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua field harus diisi.");
+            return;
+        }
+
+        // Konversi jumlah pegawai dan anggaran ke tipe data yang sesuai
+        int jumlahPegawai = 0;
+        double anggaranDepartemen = 0;
+        try {
+            jumlahPegawai = Integer.parseInt(jumlahPegawaiStr);
+            anggaranDepartemen = Double.parseDouble(anggaranDepartemenStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Jumlah pegawai dan anggaran harus berupa angka.");
+            return;
+        }
+
+        // Menyiapkan query untuk mengubah data departemen
+        String query = "UPDATE departemen SET nama_departemen = ?, lokasi_departemen = ?, kepala_departemen = ?, jumlah_pegawai = ?, anggaran_departemen = ? WHERE id_departemen = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, namaDepartemen);
+            pstmt.setString(2, lokasiDepartemen);
+            pstmt.setString(3, kepalaDepartemen);
+            pstmt.setInt(4, jumlahPegawai);
+            pstmt.setBigDecimal(5, new BigDecimal(anggaranDepartemen));
+            pstmt.setInt(6, idDepartemen); // Mengupdate berdasarkan ID departemen
+
+            pstmt.executeUpdate(); // Eksekusi query update
+
+            JOptionPane.showMessageDialog(this, "Data departemen berhasil diubah.");
+            loadData(); // Reload tabel setelah data diubah
+
+            // Clear input fields setelah berhasil
+            TxtNamaDepartemen.setText("");
+            TxtLokasiDepartemen.setText("");
+            TxtKepalaDepartemen.setText("");
+            TxtJumlahPegawai.setText("");
+            TxtAnggaranDepartemen.setText("");
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal mengubah data: " + e.getMessage());
+        }
+    }
+    private void batal() {
+        // Kosongkan semua field input
+        TxtNamaDepartemen.setText("");
+        TxtLokasiDepartemen.setText("");
+        TxtKepalaDepartemen.setText("");
+        TxtJumlahPegawai.setText("");
+        TxtAnggaranDepartemen.setText("");
+        txtCari.setText(""); // Kosongkan field pencarian
+        tabelDepartemen.clearSelection(); // Hapus seleksi pada tabel
+        loadData(); // Muat ulang data di tabel
+    }
+    private void hapusData() {
+        int selectedRow = tabelDepartemen.getSelectedRow(); // Ambil baris yang dipilih di tabel
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data departemen yang ingin dihapus.");
+            return;
+        }
+
+        // Ambil ID Departemen yang dipilih dari tabel
+        int selectedIdDepartemen = (int) tabelDepartemen.getValueAt(selectedRow, 0);
+
+        // Konfirmasi penghapusan
+        int confirm = JOptionPane.showConfirmDialog(
+                this, 
+                "Apakah Anda yakin ingin menghapus data departemen ini?", 
+                "Konfirmasi Hapus", 
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try (PreparedStatement pstmt = conn.prepareStatement("DELETE FROM departemen WHERE id_departemen = ?")) {
+                pstmt.setInt(1, selectedIdDepartemen); // Set ID Departemen yang ingin dihapus
+                pstmt.executeUpdate(); // Jalankan query untuk menghapus data
+
+                JOptionPane.showMessageDialog(this, "Data departemen berhasil dihapus.");
+                loadData(); // Muat ulang data tabel setelah penghapusan
+
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Gagal menghapus data departemen: " + e.getMessage());
+            }
+        }
+
+        // Reset form input setelah penghapusan
+        TxtNamaDepartemen.setText("");
+        TxtLokasiDepartemen.setText("");
+        TxtKepalaDepartemen.setText("");
+        TxtJumlahPegawai.setText("");
+        TxtAnggaranDepartemen.setText("");
+        tabelDepartemen.clearSelection(); // Hapus pilihan tabel
+    }
       private void cetak(){
             try {
                     String reportPath = "src/Report/"; // Lokasi file laporan Jasper
