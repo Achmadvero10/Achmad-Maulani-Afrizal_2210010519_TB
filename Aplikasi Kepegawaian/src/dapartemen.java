@@ -466,7 +466,7 @@ private void hapusData() {
 
     private void tabelDepartemenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDepartemenMouseClicked
         int selectedRow = tabelDepartemen.getSelectedRow(); // Ambil baris yang dipilih di tabel
-if (selectedRow != -1) { // Pastikan ada baris yang dipilih
+    if (selectedRow != -1) { // Pastikan ada baris yang dipilih
     // Ambil data dari baris yang dipilih
     String idDepartemen = tabelDepartemen.getValueAt(selectedRow, 0).toString();  // Ambil ID Departemen
     String namaDepartemen = tabelDepartemen.getValueAt(selectedRow, 1).toString(); // Ambil Nama Departemen
